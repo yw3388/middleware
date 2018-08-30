@@ -1,0 +1,59 @@
+client(request)—one stock path, calculate payout,
+接受option（sigma， r，volatility。。。）
+path，计算payout
+传递payout给server
+
+server: generate a batch of 100 requests for simulations, send them to the queue, listen to results. updated estimated price and accuracy and ask fro another batch of simulations. 
+接受payout，用stats计算平均价格和stop。
+产生simulation options，给特定的queue，如需要再产生simulations
+
+
+
+Producer
+use connection factory to create connection
+use connection to create session
+use session to create producer
+ActiveMQPublisher: fields: factory, connection, session, producer
+ActiveMQPublisher一个instance叫publisher—publisher.run
+run：stocks，topics，last price
+session 有个函数叫create topic， 把stock 变成topic
+session有个函数叫createtextmessage，把“stock和price名字和数字”变成text message 
+producer.send这个topic和text message
+text message get text
+
+publisher传递topic和text message
+
+ActiveMQClient(吃ticker）： fields:factory, connection, producer, session, ticker
+ActiveMQclient一个instance叫client—client.run
+run：
+session有个函数叫create topic，把ticker变成destination
+session有个函数叫create consumer，把destination变成messageconsumer
+messageconsumer有个函数叫setmessagelistener，吃进去新的messagelistener（吃进去onmessage（吃进去message）如果message是个textmessage instance，吐出来cast message to text message.gettext))
+
+client感兴趣的topic叫ticker，对每个topic（destination），session就创立consumer
+client接受message，通过设立messagelistener
+
+
+
+
+
+
+
+Producer
+use connection factory to create connection
+use connection to create session
+use session to create queue
+
+
+session to create producer, told to send message to a specific queue
+(create.producer(queue))
+create message and send in loop
+sent the last message:
+(producer.send(session.createTextMessage)
+connection close
+
+Client
+use session to create messageconsumer(queue)
+client receive
+session close
+connection close
